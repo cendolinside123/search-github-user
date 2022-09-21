@@ -125,7 +125,12 @@ extension ListUserViewController: UITableViewDelegate, UITableViewDataSource {
         return cell
     }
     
-    
+    func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "CellUser", for: indexPath) as? GitUserTableViewCell else {
+            return
+        }
+        cell.cancelLoadImage()
+    }
 }
 
 extension ListUserViewController {
