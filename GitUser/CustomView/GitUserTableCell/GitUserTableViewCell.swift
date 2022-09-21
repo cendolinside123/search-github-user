@@ -109,7 +109,8 @@ class GitUserTableViewCell: UITableViewCell {
 extension GitUserTableViewCell {
     func setupCell(_ item: Item) {
         lblUserName.text = item.login ?? "-"
-        
-        
+        if let getStringUrl = item.avatarURL, let getImageURL = URL(string: getStringUrl) {
+            userImage.kf.setImage(with: getImageURL)
+        }
     }
 }
