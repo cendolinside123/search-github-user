@@ -76,6 +76,21 @@ class ListUserViewController: UIViewController {
         self.view.addSubview(loadingView)
         self.view.addSubview(bottomLoadingView)
         
+        if !UIDevice.current.iPad {
+            if UIDevice.current.specialType {
+                scrollControll.setSliceNumber(sliceNumber: 15)
+            } else {
+                switch UIDevice.current.screenType {
+                case .iPhones_4_4S, .iPhones_5_5s_5c_SE:
+                    scrollControll.setSliceNumber(sliceNumber: 10)
+                default:
+                    scrollControll.setSliceNumber(sliceNumber: 12)
+                }
+            }
+        } else {
+            scrollControll.setSliceNumber(sliceNumber: 0)
+        }
+        
         let tabDismissKeyboard = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         view.addGestureRecognizer(tabDismissKeyboard)
     }
