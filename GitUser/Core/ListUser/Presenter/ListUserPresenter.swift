@@ -22,7 +22,11 @@ class ListUserPresenter {
     fileprivate weak var view: ListUserViewProtocol?
     fileprivate var router: ListUserRouterProtocol?
     
-    private var waitProcess: Bool = false
+    private var waitProcess: Bool = false {
+        didSet {
+            print("waitProcess: \(waitProcess)")
+        }
+    }
     private var offsetPage: Int = 0
     private var currentPage: Int = 0
     private var tempKeyworld: String = ""
@@ -85,6 +89,7 @@ extension ListUserPresenter: ListUserPresenterProtocol {
         } else {
             view?.showUsers([])
             view?.hideloading()
+            waitProcess = false
         }
         
     }
