@@ -19,6 +19,8 @@ class ListUserPresenter {
     fileprivate weak var view: ListUserViewProtocol?
     fileprivate var router: ListUserRouterProtocol?
     
+    private var waitProcess: Bool = false
+    
     init() {
         
     }
@@ -44,6 +46,11 @@ extension ListUserPresenter: ListUserPresenterProtocol {
     
     
     func usersDidLoad(keyword text: String) {
+        
+        if waitProcess {
+            return
+        }
+        waitProcess = true
         view?.showLoading()
         
         if !text.isEmpty {
@@ -67,10 +74,10 @@ extension ListUserPresenter: ListUserOutputInteractorProtocol {
         view?.hideloading()
         guard let getListUser = items as? [Item] else {
             print("error response: wrong data type")
-//            view?.showError()
             return
         }
         view?.showUsers(getListUser)
+        waitProcess = false
     }
     
     func userListError<T>(error message: T) {
@@ -80,7 +87,6 @@ extension ListUserPresenter: ListUserOutputInteractorProtocol {
             print("error response: \(message)")
             view?.showError(error: getMessage)
         }
-        
-        
+        waitProcess = false
     }
 }

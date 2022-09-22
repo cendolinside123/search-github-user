@@ -35,7 +35,7 @@ extension SearchBarViewPresenter: SearchBarPresenterProtocol {
         
         userInput = text
         
-        checkInputSchedule = Timer.scheduledTimer(timeInterval: 1.5, target: self, selector: #selector(doInput), userInfo: nil, repeats: false)
+        checkInputSchedule = Timer.scheduledTimer(timeInterval: 2, target: self, selector: #selector(doInput), userInfo: nil, repeats: false)
         
     }
     
