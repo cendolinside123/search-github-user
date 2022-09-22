@@ -53,8 +53,6 @@ class ListUserViewController: UIViewController {
         }
         
     }
-    
-    private var listUser: [Item] = []
     /*
     // MARK: - Navigation
 
@@ -185,7 +183,6 @@ extension ListUserViewController: ListUserViewProtocol {
         guard let getListUser = items as? [Item] else {
             return
         }
-        self.listUser = getListUser
         scrollControll.setTempData(data: getListUser)
         tabelListUser.reloadData()
         if getListUser.count != 0 {
