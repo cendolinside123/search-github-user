@@ -26,6 +26,8 @@ class ListUserViewController: UIViewController {
         tabel.backgroundColor = .white
         return tabel
     }()
+    
+    private let scrollControll: InfiniteScroll = InfiniteScroll<Item>(sliceNumber: 12)
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -41,6 +43,15 @@ class ListUserViewController: UIViewController {
         searchNavBar.didFinishType = { [weak self] text in
             self?.presenter?.usersDidLoad(keyword: text)
         }
+        
+        scrollControll.loadingAnimation = { [weak self] in
+            
+        }
+        
+        scrollControll.endLoadingAnimation = { [weak self] in
+            
+        }
+        
     }
     
     private var listUser: [Item] = []
@@ -112,16 +123,30 @@ class ListUserViewController: UIViewController {
 
 }
 
+extension ListUserViewController {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let height = scrollView.frame.size.height
+        let contentYOffset = scrollView.contentOffset.y
+        let distanceFromBottom = scrollView.contentSize.height - contentYOffset
+
+        if (distanceFromBottom < height) && (scrollControll.nomberOfCurrentData() != 0) {
+            print("You reached end of the table")
+            scrollControll.refetchData(tabel: tabelListUser)
+            
+        }
+    }
+}
+
 extension ListUserViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return listUser.count
+        return scrollControll.nomberOfCurrentData()
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "CellUser", for: indexPath) as? GitUserTableViewCell else {
             return UITableViewCell()
         }
-        cell.setupCell(listUser[indexPath.row])
+        cell.setupCell(scrollControll.getOrifinalData()[indexPath.row])
         return cell
     }
     
@@ -147,6 +172,7 @@ extension ListUserViewController: ListUserViewProtocol {
     
     func showError(error message: Error) {
         print("show error")
+        scrollControll.resetList()
     }
     
     func showLoading() {
@@ -160,7 +186,11 @@ extension ListUserViewController: ListUserViewProtocol {
             return
         }
         self.listUser = getListUser
+        scrollControll.setTempData(data: getListUser)
         tabelListUser.reloadData()
+        if getListUser.count != 0 {
+            tabelListUser.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
+        }
     }
     
     func hideloading() {
