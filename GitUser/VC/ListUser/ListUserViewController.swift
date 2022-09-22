@@ -15,6 +15,8 @@ class ListUserViewController: UIViewController {
     
     private let loadingView: LoadingView = LoadingView()
     
+    private let bottomLoadingView: BottomLoadingView = BottomLoadingView()
+    
     private let emptyBar: UIView = {
         let view = UIView()
         view.backgroundColor = .yellow
@@ -37,6 +39,7 @@ class ListUserViewController: UIViewController {
         setupConstraints()
         setupTabel()
         loadingView.isHidden = true
+        bottomLoadingView.stopAnimate()
         
         
         ListUserRouter.setupModule(view: self)
@@ -45,11 +48,13 @@ class ListUserViewController: UIViewController {
         }
         
         scrollControll.loadingAnimation = { [weak self] in
-            
+            self?.toggleBottomLoading(isShow: true)
+            self?.bottomLoadingView.startAnimate()
         }
         
         scrollControll.endLoadingAnimation = { [weak self] in
-            
+            self?.toggleBottomLoading(isShow: false)
+            self?.bottomLoadingView.stopAnimate()
         }
         
     }
@@ -69,13 +74,14 @@ class ListUserViewController: UIViewController {
         emptyBar.addSubview(searchNavBar)
         self.view.addSubview(tabelListUser)
         self.view.addSubview(loadingView)
+        self.view.addSubview(bottomLoadingView)
         
         let tabDismissKeyboard = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         view.addGestureRecognizer(tabDismissKeyboard)
     }
     
     private func setupConstraints() {
-        let views: [String: Any] = ["emptyBar": emptyBar, "tabelListUser": tabelListUser, "searchNavBar": searchNavBar]
+        let views: [String: Any] = ["emptyBar": emptyBar, "tabelListUser": tabelListUser, "searchNavBar": searchNavBar, "bottomLoadingView": bottomLoadingView]
         var constraints: [NSLayoutConstraint] = []
         
         emptyBar.translatesAutoresizingMaskIntoConstraints = false
@@ -98,12 +104,23 @@ class ListUserViewController: UIViewController {
         constraints += NSLayoutConstraint.constraints(withVisualFormat: hSearchNavBar, options: .alignAllTop, metrics: [:], views: views)
         constraints += NSLayoutConstraint.constraints(withVisualFormat: vSearchNavBar, options: .alignAllCenterX, metrics: [:], views: views)
         
+        
         loadingView.translatesAutoresizingMaskIntoConstraints = false
         
         constraints += [NSLayoutConstraint(item: loadingView, attribute: .width, relatedBy: .equal, toItem: view, attribute: .width, multiplier: 1/5, constant: 0)]
         constraints += [NSLayoutConstraint(item: loadingView, attribute: .height, relatedBy: .equal, toItem: loadingView, attribute: .width, multiplier: 1, constant: 0)]
         constraints += [NSLayoutConstraint(item: loadingView, attribute: .centerX, relatedBy: .equal, toItem: view, attribute: .centerX, multiplier: 1, constant: 0)]
         constraints += [NSLayoutConstraint(item: loadingView, attribute: .centerY, relatedBy: .equal, toItem: view, attribute: .centerY, multiplier: 1, constant: 0)]
+        
+        
+        bottomLoadingView.translatesAutoresizingMaskIntoConstraints = false
+        let hBottomLoadingView = "H:|-0-[bottomLoadingView]-0-|"
+        
+        constraints += NSLayoutConstraint.constraints(withVisualFormat: hBottomLoadingView, options: .alignAllBottom, metrics: [:], views: views)
+        constraints += [NSLayoutConstraint(item: bottomLoadingView, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 45)]
+        let bottomLodingConstraint = NSLayoutConstraint(item: bottomLoadingView, attribute: .bottom, relatedBy: .equal, toItem: view, attribute: .bottom, multiplier: 1, constant: 45)
+        bottomLodingConstraint.identifier = "bottomLodingConstraint"
+        constraints += [bottomLodingConstraint]
         
         NSLayoutConstraint.activate(constraints)
     }
@@ -133,6 +150,24 @@ extension ListUserViewController {
             
         }
     }
+    
+    private func toggleBottomLoading(isShow: Bool) {
+        var allConstrains: [NSLayoutConstraint] = view.constraints
+        guard let getIndex = ConstraintHelper.findConstraints(allConstrains, name: "bottomLodingConstraint") else {
+            return
+        }
+        NSLayoutConstraint.deactivate(allConstrains)
+        
+        if isShow {
+            allConstrains[getIndex] = NSLayoutConstraint(item: bottomLoadingView, attribute: .bottom, relatedBy: .equal, toItem: view, attribute: .bottom, multiplier: 1, constant: 0)
+        } else {
+            allConstrains[getIndex] = NSLayoutConstraint(item: bottomLoadingView, attribute: .bottom, relatedBy: .equal, toItem: view, attribute: .bottom, multiplier: 1, constant: 45)
+        }
+        allConstrains[getIndex].identifier = "bottomLodingConstraint"
+        
+        NSLayoutConstraint.activate(allConstrains)
+    }
+    
 }
 
 extension ListUserViewController: UITableViewDelegate, UITableViewDataSource {
