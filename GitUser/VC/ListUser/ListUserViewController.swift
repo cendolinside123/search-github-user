@@ -9,7 +9,7 @@ import UIKit
 
 class ListUserViewController: UIViewController {
     
-    private var presenter: ListUserPresenterProtocol?
+    private var presenter: ListUserPresenter?
     
     private let searchNavBar: SearchBarView = SearchBarView()
     
@@ -29,7 +29,7 @@ class ListUserViewController: UIViewController {
         return tabel
     }()
     
-    private let scrollControll: InfiniteScroll = InfiniteScroll<Item>(sliceNumber: 12)
+    private var offset: Int = 12
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -44,17 +44,10 @@ class ListUserViewController: UIViewController {
         
         ListUserRouter.setupModule(view: self)
         searchNavBar.didFinishType = { [weak self] text in
-            self?.presenter?.usersDidLoad(keyword: text)
-        }
-        
-        scrollControll.loadingAnimation = { [weak self] in
-            self?.toggleBottomLoading(isShow: true)
-            self?.bottomLoadingView.startAnimate()
-        }
-        
-        scrollControll.endLoadingAnimation = { [weak self] in
-            self?.toggleBottomLoading(isShow: false)
-            self?.bottomLoadingView.stopAnimate()
+            guard let strongSelf = self else {
+                return
+            }
+            strongSelf.presenter?.usersDidLoad(offset: strongSelf.offset, keyword: text)
         }
         
     }
@@ -78,17 +71,17 @@ class ListUserViewController: UIViewController {
         
         if !UIDevice.current.iPad {
             if UIDevice.current.specialType {
-                scrollControll.setSliceNumber(sliceNumber: 15)
+                offset = 15
             } else {
                 switch UIDevice.current.screenType {
                 case .iPhones_4_4S, .iPhones_5_5s_5c_SE:
-                    scrollControll.setSliceNumber(sliceNumber: 10)
+                    offset = 10
                 default:
-                    scrollControll.setSliceNumber(sliceNumber: 12)
+                    offset = 12
                 }
             }
         } else {
-            scrollControll.setSliceNumber(sliceNumber: 0)
+            offset = 100
         }
         
         let tabDismissKeyboard = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
@@ -159,10 +152,9 @@ extension ListUserViewController {
         let contentYOffset = scrollView.contentOffset.y
         let distanceFromBottom = scrollView.contentSize.height - contentYOffset
 
-        if (distanceFromBottom < height) && (scrollControll.nomberOfCurrentData() != 0) {
+        if (distanceFromBottom < height) && (presenter?.listUsers.count != 0) {
             print("You reached end of the table")
-            scrollControll.refetchData(tabel: tabelListUser)
-            
+            presenter?.fetchNextPage()
         }
     }
     
@@ -181,20 +173,21 @@ extension ListUserViewController {
         allConstrains[getIndex].identifier = "bottomLodingConstraint"
         
         NSLayoutConstraint.activate(allConstrains)
+        view.layoutIfNeeded()
     }
     
 }
 
 extension ListUserViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return scrollControll.nomberOfCurrentData()
+        return presenter?.listUsers.count ?? 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "CellUser", for: indexPath) as? GitUserTableViewCell else {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "CellUser", for: indexPath) as? GitUserTableViewCell, let getUser = presenter?.listUsers[indexPath.row] else {
             return UITableViewCell()
         }
-        cell.setupCell(scrollControll.getOrifinalData()[indexPath.row])
+        cell.setupCell(getUser)
         return cell
     }
     
@@ -207,20 +200,39 @@ extension ListUserViewController: UITableViewDelegate, UITableViewDataSource {
 }
 
 extension ListUserViewController {
-    func getPresenter() -> ListUserPresenterProtocol? {
+    func getPresenter() -> ListUserPresenter? {
         return presenter
     }
     
-    func setPresenter(_ presenter: ListUserPresenterProtocol) {
+    func setPresenter(_ presenter: ListUserPresenter) {
         self.presenter = presenter
     }
 }
 
 extension ListUserViewController: ListUserViewProtocol {
+    func loadNextUsers<T>(_ items: T) {
+        guard let getListItem = items as? [IndexPath] else {
+            return
+        }
+        tabelListUser.beginUpdates()
+        tabelListUser.insertRows(at: getListItem, with: .bottom)
+    }
+    
+    func startReFetch() {
+        print("begin re-fetch")
+        self.toggleBottomLoading(isShow: true)
+        self.bottomLoadingView.startAnimate()
+    }
+    
+    func endReFetch() {
+        print("end re-fetch")
+        tabelListUser.endUpdates()
+        self.toggleBottomLoading(isShow: false)
+        self.bottomLoadingView.stopAnimate()
+    }
     
     func showError(error message: Error) {
         print("show error")
-        scrollControll.resetList()
     }
     
     func showLoading() {
@@ -233,7 +245,6 @@ extension ListUserViewController: ListUserViewProtocol {
         guard let getListUser = items as? [Item] else {
             return
         }
-        scrollControll.setTempData(data: getListUser)
         tabelListUser.reloadData()
         if getListUser.count != 0 {
             tabelListUser.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false)

@@ -24,7 +24,6 @@
 		7276A82328DA05600082940E /* ListUserPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7276A82228DA05600082940E /* ListUserPresenter.swift */; };
 		7276A82528DA056D0082940E /* ListUserRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7276A82428DA056D0082940E /* ListUserRouter.swift */; };
 		72F92D2028DC24E300BFBDB2 /* GitUserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72F92D1F28DC24E300BFBDB2 /* GitUserTests.swift */; };
-		72F92D2A28DC471B00BFBDB2 /* InfiniteScroll.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72F92D2928DC471B00BFBDB2 /* InfiniteScroll.swift */; };
 		72F92D2D28DC7F4E00BFBDB2 /* BottomLoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72F92D2C28DC7F4E00BFBDB2 /* BottomLoadingView.swift */; };
 		72F92D2F28DC842200BFBDB2 /* ConstraintsHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72F92D2E28DC842200BFBDB2 /* ConstraintsHelper.swift */; };
 		CD882390403FC8BD0ADBE813 /* Pods_GitUser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6B926F98652FCA19435638D9 /* Pods_GitUser.framework */; };
@@ -64,7 +63,6 @@
 		7276A82428DA056D0082940E /* ListUserRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListUserRouter.swift; sourceTree = "<group>"; };
 		72F92D1D28DC24E300BFBDB2 /* GitUserTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GitUserTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		72F92D1F28DC24E300BFBDB2 /* GitUserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitUserTests.swift; sourceTree = "<group>"; };
-		72F92D2928DC471B00BFBDB2 /* InfiniteScroll.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfiniteScroll.swift; sourceTree = "<group>"; };
 		72F92D2C28DC7F4E00BFBDB2 /* BottomLoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomLoadingView.swift; sourceTree = "<group>"; };
 		72F92D2E28DC842200BFBDB2 /* ConstraintsHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConstraintsHelper.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -235,7 +233,6 @@
 			isa = PBXGroup;
 			children = (
 				72F92D2B28DC7F0D00BFBDB2 /* BottomLoadingView */,
-				72F92D2828DC46E500BFBDB2 /* InfiniteScroll */,
 				7236B1D928DB169300DA6072 /* LoadingView */,
 				7236B1D628DACF0A00DA6072 /* SearchBar */,
 				7276A81728D9C8D10082940E /* GitUserTableCell */,
@@ -278,14 +275,6 @@
 				72F92D1F28DC24E300BFBDB2 /* GitUserTests.swift */,
 			);
 			path = GitUserTests;
-			sourceTree = "<group>";
-		};
-		72F92D2828DC46E500BFBDB2 /* InfiniteScroll */ = {
-			isa = PBXGroup;
-			children = (
-				72F92D2928DC471B00BFBDB2 /* InfiniteScroll.swift */,
-			);
-			path = InfiniteScroll;
 			sourceTree = "<group>";
 		};
 		72F92D2B28DC7F0D00BFBDB2 /* BottomLoadingView */ = {
@@ -441,7 +430,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				72F92D2A28DC471B00BFBDB2 /* InfiniteScroll.swift in Sources */,
 				7276A7FA28D99DCA0082940E /* ViewController.swift in Sources */,
 				7276A82128DA05510082940E /* ListUserInteractor.swift in Sources */,
 				7276A81F28D9EAEB0082940E /* ListUserProtocol.swift in Sources */,

@@ -17,7 +17,7 @@ extension ListUserRouter: ListUserRouterProtocol {
         guard let getView = view as? ListUserViewController else {
             return
         }
-        let presenter: ListUserPresenterProtocol & ListUserOutputInteractorProtocol = ListUserPresenter()
+        let presenter = ListUserPresenter()
         
         getView.setPresenter(presenter)
         getView.getPresenter()?.setupInteractor(ListUserInteractor(presenter: presenter))

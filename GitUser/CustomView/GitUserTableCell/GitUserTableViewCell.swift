@@ -116,6 +116,7 @@ extension GitUserTableViewCell {
     
     func cancelLoadImage() {
         userImage.kf.cancelDownloadTask()
+        userImage.image = nil
     }
     
 }

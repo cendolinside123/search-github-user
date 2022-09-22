@@ -21,7 +21,7 @@ struct Users: Codable {
 }
 
 // MARK: - Item
-struct Item: Codable {
+struct Item: Codable, Hashable {
     let login: String?
     let id: Int?
     let nodeID: String?
@@ -56,6 +56,15 @@ struct Item: Codable {
         case siteAdmin = "site_admin"
         case score
     }
+    
+    static func == (lhs: Item, rhs: Item) -> Bool {
+        return lhs.id == rhs.id || lhs.login == rhs.login
+    }
+
+    func hash(into hasher: inout Hasher) {
+        
+    }
+    
 }
 
 enum TypeEnum: String, Codable {

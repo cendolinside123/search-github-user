@@ -28,8 +28,8 @@ extension ListUserInteractor: ListUserInteractorProtocolSetup {
 
 extension ListUserInteractor: ListUserInputInteractorProtocol {
      
-    func userListUsers(keyword text: String) {
-        UserDataSource.getUser(searchKey: text, completion: { [weak self] response in
+    func userListUsers(offset: Int, page: Int, keyword text: String) {
+        UserDataSource.getUser(searchKey: text, offset: offset, page: page, completion: { [weak self] response in
             switch response {
             case .success(let data):
                 self?.presenter?.userListDidFetch(data.items)
@@ -44,12 +44,12 @@ extension ListUserInteractor: ListUserInputInteractorProtocol {
 
 struct UserDataSource {
     
-    static func getUser(searchKey text: String, completion: @escaping (Result<Users, Error>) -> Void) {
+    static func getUser(searchKey text: String, offset: Int, page: Int, completion: @escaping (Result<Users, Error>) -> Void) {
         
         let url = Constant.Url.searchUser.routeAPI
         
         DispatchQueue.global().async {
-            AF.request(url, method: .get, parameters: ["q": text], encoding: URLEncoding.default, headers: nil, interceptor: nil, requestModifier: nil).responseData(completionHandler: { response in
+            AF.request(url, method: .get, parameters: ["q": text, "per_page": offset, "page": page], encoding: URLEncoding.default, headers: nil, interceptor: nil, requestModifier: nil).responseData(completionHandler: { response in
                 switch response.result {
                 case .success(let data):
                     DispatchQueue.main.async {

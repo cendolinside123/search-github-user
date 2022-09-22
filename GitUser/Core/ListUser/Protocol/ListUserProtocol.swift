@@ -10,7 +10,10 @@ import UIKit
 
 
 protocol ListUserPresenterProtocol: AnyObject {
-    func usersDidLoad(keyword text: String)
+    associatedtype UserType
+    var listUsers: [UserType] { get set }
+    func fetchNextPage()
+    func usersDidLoad(offset: Int, keyword text: String)
     func setupInteractor(_ interactor: ListUserInputInteractorProtocol)
     func setupView(_ view: ListUserViewProtocol)
     func setupRouter(_ router: ListUserRouterProtocol)
@@ -18,13 +21,16 @@ protocol ListUserPresenterProtocol: AnyObject {
 
 protocol ListUserViewProtocol: AnyObject {
     func showUsers<T>(_ items: T)
+    func loadNextUsers<T>(_ items: T)
     func showError(error message: Error)
     func showLoading()
     func hideloading()
+    func startReFetch()
+    func endReFetch()
 }
 
 protocol ListUserInputInteractorProtocol: AnyObject {
-    func userListUsers(keyword text: String)
+    func userListUsers(offset: Int, page: Int, keyword text: String)
 }
 
 protocol ListUserOutputInteractorProtocol: AnyObject {
