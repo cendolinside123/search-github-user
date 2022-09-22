@@ -35,6 +35,19 @@ class ListUserPresenter {
         
     }
     
+    func fetchNextPage() {
+        if waitProcess {
+            return
+        }
+        
+        if delayTimer != nil {
+            delayTimer?.invalidate()
+            delayTimer = nil
+        }
+        view?.startReFetch()
+        delayTimer = Timer.scheduledTimer(timeInterval: 2.5, target: self, selector: #selector(doDelayedRequest), userInfo: nil, repeats: false)
+    }
+    
 }
 
 extension ListUserPresenter: ListUserPresenterProtocolSetup {
@@ -86,18 +99,7 @@ extension ListUserPresenter: ListUserPresenterProtocol {
         interactor?.userListUsers(offset: offset, page: page, keyword: key)
     }
     
-    func fetchNextPage() {
-        if waitProcess {
-            return
-        }
-        
-        if delayTimer != nil {
-            delayTimer?.invalidate()
-            delayTimer = nil
-        }
-        view?.startReFetch()
-        delayTimer = Timer.scheduledTimer(timeInterval: 2.5, target: self, selector: #selector(doDelayedRequest), userInfo: nil, repeats: false)
-    }
+    
 }
 
 extension ListUserPresenter {
