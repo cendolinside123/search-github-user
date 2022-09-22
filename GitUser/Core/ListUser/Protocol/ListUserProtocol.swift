@@ -18,7 +18,7 @@ protocol ListUserPresenterProtocol: AnyObject {
 
 protocol ListUserViewProtocol: AnyObject {
     func showUsers<T>(_ items: T)
-    func showError()
+    func showError(error message: Error)
     func showLoading()
     func hideloading()
 }
@@ -29,7 +29,7 @@ protocol ListUserInputInteractorProtocol: AnyObject {
 
 protocol ListUserOutputInteractorProtocol: AnyObject {
     func userListDidFetch<T>(_ items: T)
-    func userListError(error message: String)
+    func userListError<T>(error message: T)
 }
 
 protocol ListUserRouterProtocol: AnyObject {

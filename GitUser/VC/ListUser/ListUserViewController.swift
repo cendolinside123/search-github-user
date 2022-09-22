@@ -144,7 +144,8 @@ extension ListUserViewController {
 }
 
 extension ListUserViewController: ListUserViewProtocol {
-    func showError() {
+    
+    func showError(error message: Error) {
         print("show error")
     }
     

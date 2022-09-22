@@ -67,15 +67,20 @@ extension ListUserPresenter: ListUserOutputInteractorProtocol {
         view?.hideloading()
         guard let getListUser = items as? [Item] else {
             print("error response: wrong data type")
-            view?.showError()
+//            view?.showError()
             return
         }
         view?.showUsers(getListUser)
     }
     
-    func userListError(error message: String) {
-        print("error response: \(message)")
+    func userListError<T>(error message: T) {
         view?.hideloading()
-        view?.showError()
+        
+        if let getMessage = message as? Error {
+            print("error response: \(message)")
+            view?.showError(error: getMessage)
+        }
+        
+        
     }
 }

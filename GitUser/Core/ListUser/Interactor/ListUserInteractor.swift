@@ -34,7 +34,7 @@ extension ListUserInteractor: ListUserInputInteractorProtocol {
             case .success(let data):
                 self?.presenter?.userListDidFetch(data.items)
             case .failure(let error):
-                self?.presenter?.userListError(error: error.localizedDescription)
+                self?.presenter?.userListError(error: error)
             }
         })
     }
